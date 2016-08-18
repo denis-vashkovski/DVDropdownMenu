@@ -10,7 +10,7 @@
 
 @implementation DVDropdownMenuItem
 
-+ (instancetype)dropdownMenuItemWithTitle:(NSString *)title handler:(void (^)(DVDropdownMenuItem *))handler {
++ (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *))handler {
     DVDropdownMenuItem *item = [self new];
     item.title = title;
     item.handler = handler;

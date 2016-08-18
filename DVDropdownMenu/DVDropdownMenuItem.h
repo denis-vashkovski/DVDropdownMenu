@@ -14,9 +14,9 @@ typedef enum {
 } DVDropdownMenuItemType;
 
 @interface DVDropdownMenuItem : NSObject
-+ (instancetype)dropdownMenuItemWithTitle:(NSString *)title handler:(void (^)(DVDropdownMenuItem *item))handler;
++ (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *item))handler;
 
 @property (nonatomic, assign) DVDropdownMenuItemType type;
-@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSAttributedString *title;
 @property (nonatomic, strong) void (^handler)(DVDropdownMenuItem *item);
 @end

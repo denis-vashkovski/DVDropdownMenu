@@ -18,7 +18,7 @@ Dropdown menu for UINavigationBar
 
 1.  Add the pod `DVDropdownMenu` to your [Podfile](http://guides.cocoapods.org/using/the-podfile.html).
 
-pod 'DVDropdownMenu', :git => 'https://github.com/denis-vashkovski/DVDropdownMenu.git'
+        pod 'DVDropdownMenu', :git => 'https://github.com/denis-vashkovski/DVDropdownMenu.git'
 
 2.  Run `pod install` from Terminal, then open your app's `.xcworkspace` file to launch Xcode.
 

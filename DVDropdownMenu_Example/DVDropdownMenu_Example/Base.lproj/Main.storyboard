@@ -14,40 +14,53 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gm7-CD-55W">
-                                <rect key="frame" x="230" y="275" width="140" height="50"/>
+                                <rect key="frame" x="20" y="259" width="280" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="Ebb-Ai-4MA"/>
                                     <constraint firstAttribute="height" constant="50" id="hfF-3F-djf"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TIP-L1-BLt">
+                                <rect key="frame" x="0.0" y="352" width="320" height="216"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="216" id="VqC-qv-Tya"/>
+                                </constraints>
+                            </pickerView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="gm7-CD-55W" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2zn-5h-vDo"/>
+                            <constraint firstAttribute="trailing" secondItem="gm7-CD-55W" secondAttribute="trailing" constant="20" id="3G0-SS-hJ0"/>
+                            <constraint firstItem="TIP-L1-BLt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Gw1-6a-ack"/>
                             <constraint firstItem="gm7-CD-55W" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Lev-Mm-Ccw"/>
+                            <constraint firstItem="gm7-CD-55W" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="Q18-S3-tsh"/>
+                            <constraint firstAttribute="trailing" secondItem="TIP-L1-BLt" secondAttribute="trailing" id="axK-mY-r6F"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="TIP-L1-BLt" secondAttribute="bottom" id="poR-2T-Hw0"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="d06-cM-UMW"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="labelCenter" destination="gm7-CD-55W" id="nYc-ED-wz7"/>
+                        <outlet property="pickerViewAnimationTypes" destination="TIP-L1-BLt" id="RmL-pD-zjH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="986" y="691"/>
+            <point key="canvasLocation" x="743" y="691"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="chr-Q0-94d">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="emK-gc-dBQ" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="apn-vw-72u">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

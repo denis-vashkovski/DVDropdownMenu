@@ -16,8 +16,7 @@
 typedef enum {
     DVDropdownMenuAnimationTypeDefault,
     DVDropdownMenuAnimationTypeSpring,
-    DVDropdownMenuAnimationTypeFade,
-    DVDropdownMenuAnimationTypeJalousie
+    DVDropdownMenuAnimationTypeFade
 } DVDropdownMenuAnimationType;
 
 @interface UINavigationController(DVDropdownMenu)
@@ -27,9 +26,9 @@ typedef enum {
 - (BOOL)dv_isDropdownMenuVisible;
 
 - (void)dv_showDropdownMenuWithAnimation:(DVDropdownMenuAnimationType)animationType completionHandler:(void (^)())completionHandler;
-- (void)dv_showDropdownMenu;
 - (void)dv_hideDropdownMenuWithCompletionHandler:(void (^)())completionHandler;
-- (void)dv_hideDropdownMenu;
+
+- (void)dv_dropdownReloadItems;
 @end
 
 @protocol DVDropdownMenuDelegate <NSObject>

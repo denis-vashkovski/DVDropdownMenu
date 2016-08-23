@@ -17,11 +17,30 @@
 - (void)initWithTitle:(NSAttributedString *)title;
 @end
 @implementation DVDropdownMenuItemCellDefault
-+ (Class)layerClass {
-    return [CATransformLayer class];
-}
 - (void)initWithTitle:(NSAttributedString *)title {
     [self.textLabel setAttributedText:title];
+}
+@end
+
+#pragma mark DVDropdownMenuItemCellCustom
+@interface DVDropdownMenuItemCellCustom : UITableViewCell
+- (void)initWithCustomView:(UIView *)customView;
+@end
+@implementation DVDropdownMenuItemCellCustom {
+    UIView *_customView;
+}
+- (void)initWithCustomView:(UIView *)customView {
+    if (_customView) [_customView removeFromSuperview];
+    _customView = customView;
+    
+    if (_customView) {
+        [self addSubview:_customView];
+        
+        NSDictionary *views = @{ @"customView": _customView };
+        [_customView setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[customView]|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[customView]|" options:0 metrics:nil views:views]];
+    }
 }
 @end
 
@@ -36,10 +55,9 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
 @end
 @implementation DVDropdownMenu
 
-#define DV_ITEM_CELL_DEFAULT @"DVDropdownMenuItemCellDefault"
 - (NSArray<NSString *> *)cellsIds {
     if (!_cellsIds) {
-        _cellsIds = @[ DV_ITEM_CELL_DEFAULT,
+        _cellsIds = @[ @"DVDropdownMenuItemCellDefault",
                        @"DVDropdownMenuItemCellCustom" ];
     }
     return _cellsIds;
@@ -50,7 +68,9 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     
     [self updateView];
     
-    [self.tableViewMenu registerClass:[DVDropdownMenuItemCellDefault class] forCellReuseIdentifier:DV_ITEM_CELL_DEFAULT];
+    for (NSString *reuseIdentifier in self.cellsIds) {
+        [self.tableViewMenu registerClass:NSClassFromString(reuseIdentifier) forCellReuseIdentifier:reuseIdentifier];
+    }
     [self.tableViewMenu reloadData];
 }
 
@@ -108,6 +128,13 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:indexPath];
     switch (item.type) {
         case DVDropdownMenuItemCustom:{
+            DVDropdownMenuItemCellCustom *cellCustom = (DVDropdownMenuItemCellCustom *)cell;
+            if (!cellCustom) {
+                cellCustom = [[DVDropdownMenuItemCellCustom alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
+            }
+            [cellCustom initWithCustomView:item.customView];
+            
+            cell = cellCustom;
             
             break;
         }
@@ -244,6 +271,10 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     [self dv_hideDropdownMenuWithCompletionHandler:nil];
 }
 
+- (void)dv_dropdownReloadItems {
+    [self.dvDropdownMenu.tableViewMenu reloadData];
+}
+
 #pragma mark - Utils
 - (void)dv_dropdownMenuVisible:(BOOL)visible animationType:(DVDropdownMenuAnimationType)animationType completionHandler:(void (^)())completionHandler {
     switch (animationType) {
@@ -280,6 +311,7 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
                     CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
                     dropdownMenuFrame.origin.y = -CGRectGetHeight(dropdownMenuFrame);
                     [self.dvDropdownMenu setFrame:dropdownMenuFrame];
+                    [self.dvDropdownMenu setAlpha:1.];
                 }
                 
                 if (completionHandler) completionHandler();
@@ -287,35 +319,34 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
             
             break;
         }
-        case DVDropdownMenuAnimationTypeJalousie:{
-            CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
-            dropdownMenuFrame.origin.y = .0;
-            [self.dvDropdownMenu setFrame:dropdownMenuFrame];
-            
-            for (UITableViewCell *cell in self.dvDropdownMenu.tableViewMenu.visibleCells) {
-                if (visible) {
-                    CATransform3D transform = CATransform3DIdentity;
-                    transform.m34 = -1. / 1500.;
-                    transform = CATransform3DRotate(transform, M_PI_2, 1., .0, .0);
-                    cell.layer.transform = transform;
-                }
-                
-                [UIView animateWithDuration:ANIMATION_DURATION animations:^{
-                    CATransform3D transform = CATransform3DRotate(cell.layer.transform, (visible ? -M_PI_2 : M_PI_2), .1, .0, .0);
-//                    transform = CATransform3DScale(transform, 1.09, 1., 1.);
-                    cell.layer.transform = transform;
-                } completion:^(BOOL finished) {
-                    if (!visible) {
-                        CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
-                        dropdownMenuFrame.origin.y = -CGRectGetHeight(dropdownMenuFrame);
-                        [self.dvDropdownMenu setFrame:dropdownMenuFrame];
-                    }
-                    if (completionHandler) completionHandler();
-                }];
-            }
-            
-            break;
-        }
+//        case DVDropdownMenuAnimationTypeJalousie:{
+//            CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
+//            dropdownMenuFrame.origin.y = .0;
+//            [self.dvDropdownMenu setFrame:dropdownMenuFrame];
+//            
+//            for (UITableViewCell *cell in self.dvDropdownMenu.tableViewMenu.visibleCells) {
+//                if (visible) {
+//                    CATransform3D transform = CATransform3DIdentity;
+//                    transform.m34 = -1. / 1500.;
+//                    transform = CATransform3DRotate(transform, M_PI_2, 1., .0, .0);
+//                    cell.layer.transform = transform;
+//                }
+//                
+//                [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+//                    CATransform3D transform = CATransform3DRotate(cell.layer.transform, (visible ? -M_PI_2 : M_PI_2), .1, .0, .0);
+//                    cell.layer.transform = transform;
+//                } completion:^(BOOL finished) {
+//                    if (!visible) {
+//                        CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
+//                        dropdownMenuFrame.origin.y = -CGRectGetHeight(dropdownMenuFrame);
+//                        [self.dvDropdownMenu setFrame:dropdownMenuFrame];
+//                    }
+//                    if (completionHandler) completionHandler();
+//                }];
+//            }
+//            
+//            break;
+//        }
         default:{
             CGRect dropdownMenuFrame = self.dvDropdownMenu.frame;
             dropdownMenuFrame.origin.y = visible ? .0 : -CGRectGetHeight(dropdownMenuFrame);

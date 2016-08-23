@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 typedef enum {
     DVDropdownMenuItemDefault,
@@ -14,9 +15,11 @@ typedef enum {
 } DVDropdownMenuItemType;
 
 @interface DVDropdownMenuItem : NSObject
++ (instancetype)itemWithCustomView:(UIView *)customView handler:(void (^)(DVDropdownMenuItem *item))handler;
 + (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *item))handler;
 
-@property (nonatomic, assign) DVDropdownMenuItemType type;
+@property (nonatomic, strong) UIView *customView;
+@property (nonatomic, assign, readonly) DVDropdownMenuItemType type;
 @property (nonatomic, strong) NSAttributedString *title;
 @property (nonatomic, strong) void (^handler)(DVDropdownMenuItem *item);
 @end

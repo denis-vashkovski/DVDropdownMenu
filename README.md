@@ -22,6 +22,61 @@ Dropdown menu for UINavigationBar
 
 2.  Run `pod install` from Terminal, then open your app's `.xcworkspace` file to launch Xcode.
 
+## Basic Usage
+
+Import the classes header.
+
+``` objective-c
+#import "UINavigationController+DVDropdownMenu.h"
+#import "DVDropdownMenuItem.h"
+```
+
+Just create and set your items for dropdown menu and set a delegate if needed.
+
+``` objective-c
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	[self.navigationController setDVDropdownMenuItems:@[ [DVDropdownMenuItem itemWithTitle:[[NSAttributedString alloc] initWithString:@"Item1"
+                                                                                                                           attributes:@{ NSParagraphStyleAttributeName: paragraph }]
+                                                                                   handler:^(DVDropdownMenuItem *item) {
+                                                                                       // do something
+                                                                                   }],
+                                                         [DVDropdownMenuItem itemWithCustomView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"image"]]
+                                                                                        handler:^(DVDropdownMenuItem *item) {
+                                                                                            // do something
+                                                                                        }],
+                                                         [DVDropdownMenuItem itemWithTitle:[[NSAttributedString alloc] initWithString:@"Item3"
+                                                                                                                           attributes:@{ NSParagraphStyleAttributeName: paragraph }]
+                                                                                   handler:^(DVDropdownMenuItem *item) {
+                                                                                       // do something
+                                                                                   }] ]];
+    [self.navigationController setDVDropdownMenuDelegate:self];
+}
+```
+## Delegate (optional)
+
+`DVDropdownMenu` provides two delegate methods. The method `dv_didShowedDropdownMenu` called when dropdown menu appears. The method `dv_didHiddenDropdownMenu` called when dropdown menu disappears.
+
+```objective-c
+@interface ViewController () <DVDropdownMenuDelegate>
+```
+
+Then implement the delegate functions.
+
+```objective-c
+// Called when dropdown menu appears.
+- (void)dv_didShowedDropdownMenu {
+    // do something
+}
+
+// Called when dropdown menu disappears.
+- (void)dv_didHiddenDropdownMenu {
+    // do something
+}
+```
+
 ## Demo
 
 Build and run the `DVDropdownMenu_Example` project in Xcode to see `DVDropdownMenu` in action.

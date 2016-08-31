@@ -55,6 +55,24 @@ Just create and set your items for dropdown menu and set a delegate if needed.
     [self.navigationController setDVDropdownMenuDelegate:self];
 }
 ```
+
+Call the method `dv_showDropdownMenuWithAnimation:completionHandler:` for show dropdown menu.
+
+```objective-c
+- (void)onButtonDropdownShowTouch:(UIButton *)sender {
+    [self.navigationController dv_showDropdownMenuWithAnimation:DVDropdownMenuAnimationTypeDefault
+                                                  completionHandler:nil];
+}
+```
+
+Call the method `dv_hideDropdownMenuWithCompletionHandler:` for show dropdown menu.
+
+```objective-c
+- (void)onButtonDropdownHideTouch:(UIButton *)sender {
+    [self.navigationController dv_hideDropdownMenuWithCompletionHandler:nil];
+}
+```
+
 ## Delegate (optional)
 
 `DVDropdownMenu` provides two delegate methods. The method `dv_didShowedDropdownMenu` called when dropdown menu appears. The method `dv_didHiddenDropdownMenu` called when dropdown menu disappears.

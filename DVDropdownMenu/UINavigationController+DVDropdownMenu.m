@@ -151,6 +151,10 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
         }
     }
     
+    UIView *selectionView = [UIView new];
+    [selectionView setBackgroundColor:item.selectedColor];
+    [cell setSelectedBackgroundView:selectionView];
+    
     [cell setBackgroundColor:item.backgroundColor];
     
     return cell;

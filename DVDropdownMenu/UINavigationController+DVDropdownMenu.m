@@ -151,7 +151,7 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
         }
     }
     
-    [cell setBackgroundColor:[UIColor lightGrayColor]];
+    [cell setBackgroundColor:item.backgroundColor];
     
     return cell;
 }

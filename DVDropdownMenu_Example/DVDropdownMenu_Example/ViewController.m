@@ -44,6 +44,7 @@
     
     [self.navigationController setDVDropdownMenuItems:@[ [DVDropdownMenuItem itemWithTitle:[[NSAttributedString alloc] initWithString:@"Test1"
                                                                                                                            attributes:@{ NSParagraphStyleAttributeName: paragraph }]
+                                                                           backgroundColor:[UIColor redColor]
                                                                                    handler:^(DVDropdownMenuItem *item) {
                                                                                        dropdownMenuItemHandler(item.title.string);
                                                                                    }],

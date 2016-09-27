@@ -16,10 +16,12 @@ typedef enum {
 
 @interface DVDropdownMenuItem : NSObject
 + (instancetype)itemWithCustomView:(UIView *)customView handler:(void (^)(DVDropdownMenuItem *item))handler;
++ (instancetype)itemWithTitle:(NSAttributedString *)title backgroundColor:(UIColor *)backgroundColor handler:(void (^)(DVDropdownMenuItem *item))handler;
 + (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *item))handler;
 
 @property (nonatomic, strong) UIView *customView;
 @property (nonatomic, assign, readonly) DVDropdownMenuItemType type;
 @property (nonatomic, strong) NSAttributedString *title;
 @property (nonatomic, strong) void (^handler)(DVDropdownMenuItem *item);
+@property (nonatomic, strong) UIColor *backgroundColor;
 @end

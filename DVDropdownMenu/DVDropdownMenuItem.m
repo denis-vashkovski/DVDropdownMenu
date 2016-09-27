@@ -25,12 +25,24 @@
     return item;
 }
 
-+ (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *))handler {
++ (instancetype)itemWithTitle:(NSAttributedString *)title backgroundColor:(UIColor *)backgroundColor handler:(void (^)(DVDropdownMenuItem *))handler {
     DVDropdownMenuItem *item = [self new];
     item.title = title;
+    item.backgroundColor = backgroundColor;
     item.handler = handler;
     
     return item;
+}
+
++ (instancetype)itemWithTitle:(NSAttributedString *)title handler:(void (^)(DVDropdownMenuItem *))handler {
+    return [self itemWithTitle:title backgroundColor:nil handler:handler];
+}
+
+- (UIColor *)backgroundColor {
+    if (!_backgroundColor) {
+        _backgroundColor = [UIColor lightGrayColor];
+    }
+    return _backgroundColor;
 }
 
 @end

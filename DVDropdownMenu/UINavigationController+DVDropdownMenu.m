@@ -78,16 +78,17 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     if (!_tableViewMenu) {
         _tableViewMenu = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
         [_tableViewMenu setBackgroundColor:[UIColor clearColor]];
-        [_tableViewMenu setScrollEnabled:NO];
+//        [_tableViewMenu setScrollEnabled:NO];
         [_tableViewMenu setSeparatorStyle:UITableViewCellSeparatorStyleNone];
         [_tableViewMenu setDataSource:self];
         [_tableViewMenu setDelegate:self];
+        [_tableViewMenu setScrollIndicatorInsets:UIEdgeInsetsMake(64., .0, .0, .0)];
         [self addSubview:_tableViewMenu];
         
         NSDictionary *views = @{ @"tableViewMenu": _tableViewMenu };
         [_tableViewMenu setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableViewMenu]|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[tableViewMenu]|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[tableViewMenu]-100-|" options:0 metrics:nil views:views]];
     }
     return _tableViewMenu;
 }
@@ -172,9 +173,11 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
 #pragma mark Utils
 - (void)updateView {
     CGRect frame = self.frame;
-    frame.size.height = CELL_HEIGHT_DEFAULT * self.dropdownMenuItems.count + HEADER_HEIGHT;
+    frame.size.height = [UIScreen mainScreen].bounds.size.height;
     frame.origin.y = -frame.size.height;
     [self setFrame:frame];
+    
+    [self.tableViewMenu setScrollEnabled:((CELL_HEIGHT_DEFAULT * self.dropdownMenuItems.count + HEADER_HEIGHT) > (frame.size.height - 100.))];
 }
 
 @end
@@ -191,6 +194,7 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     DVDropdownMenu *dvDropdownMenu = objc_getAssociatedObject(self, @selector(dvDropdownMenu));
     if (!dvDropdownMenu) {
         dvDropdownMenu = [[DVDropdownMenu alloc] initWithFrame:CGRectMake(.0, .0, CGRectGetWidth(self.navigationBar.frame), .0)];
+        [dvDropdownMenu addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onOutsideTouch)]];
         [self.view insertSubview:dvDropdownMenu belowSubview:self.navigationBar];
         [self setDvDropdownMenu:dvDropdownMenu];
     }
@@ -277,6 +281,11 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
 
 - (void)dv_dropdownReloadItems {
     [self.dvDropdownMenu.tableViewMenu reloadData];
+}
+
+#pragma mark Actions
+- (void)onOutsideTouch {
+    [self dv_hideDropdownMenu];
 }
 
 #pragma mark - Utils

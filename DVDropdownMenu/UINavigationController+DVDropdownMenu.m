@@ -52,6 +52,7 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
 @property (nonatomic, strong) NSArray<NSString *> *cellsIds;
 @property (nonatomic, strong) NSArray<DVDropdownMenuItem *> *dropdownMenuItems;
 @property (nonatomic, strong) UITableView *tableViewMenu;
+@property (nonatomic, strong) UIView *viewBottom;
 @end
 @implementation DVDropdownMenu
 
@@ -63,34 +64,53 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     return _cellsIds;
 }
 
+#define PADDING_BOTTOM_MIN 100.
 - (void)setDropdownMenuItems:(NSArray<DVDropdownMenuItem *> *)dropdownMenuItems {
     _dropdownMenuItems = dropdownMenuItems;
     
-    [self updateView];
+    if (!_tableViewMenu) {
+        _tableViewMenu = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
+        [_tableViewMenu setBackgroundColor:[UIColor clearColor]];
+        [_tableViewMenu setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+        [_tableViewMenu setDataSource:self];
+        [_tableViewMenu setDelegate:self];
+        [_tableViewMenu setScrollIndicatorInsets:UIEdgeInsetsMake(64., .0, .0, .0)];
+        [_tableViewMenu setUserInteractionEnabled:YES];
+        [self addSubview:_tableViewMenu];
+        
+        _viewBottom = [UIView new];
+        [_viewBottom setBackgroundColor:[UIColor clearColor]];
+        [_viewBottom addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onViewBotomTouch)]];
+        [self addSubview:_viewBottom];
+        
+        [_tableViewMenu setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_viewBottom setTranslatesAutoresizingMaskIntoConstraints:NO];
+    }
+    
+    CGRect frame = self.frame;
+    frame.size.height = [UIScreen mainScreen].bounds.size.height;
+    frame.origin.y = -frame.size.height;
+    [self setFrame:frame];
+    
+    [_tableViewMenu removeConstraints:_tableViewMenu.constraints];
+    [_viewBottom removeConstraints:_viewBottom.constraints];
+    
+    CGFloat tableViewHeightMin = [self tableViewHeightMin];
+    CGFloat tableViewHeightMax = self.frame.size.height - PADDING_BOTTOM_MIN;
+    [self.tableViewMenu setScrollEnabled:(tableViewHeightMin > tableViewHeightMax)];
+    
+    NSDictionary *views = @{ @"tableViewMenu": _tableViewMenu, @"viewBottom": _viewBottom };
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableViewMenu]|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[viewBottom]|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[tableViewMenu(==tableViewHeight)][viewBottom]|"
+                                                                 options:0
+                                                                 metrics:@{ @"tableViewHeight": @(MIN(tableViewHeightMin, tableViewHeightMax)) }
+                                                                   views:views]];
     
     for (NSString *reuseIdentifier in self.cellsIds) {
         [self.tableViewMenu registerClass:NSClassFromString(reuseIdentifier) forCellReuseIdentifier:reuseIdentifier];
     }
     [self.tableViewMenu reloadData];
-}
-
-- (UITableView *)tableViewMenu {
-    if (!_tableViewMenu) {
-        _tableViewMenu = [[UITableView alloc] initWithFrame:self.frame style:UITableViewStyleGrouped];
-        [_tableViewMenu setBackgroundColor:[UIColor clearColor]];
-//        [_tableViewMenu setScrollEnabled:NO];
-        [_tableViewMenu setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-        [_tableViewMenu setDataSource:self];
-        [_tableViewMenu setDelegate:self];
-        [_tableViewMenu setScrollIndicatorInsets:UIEdgeInsetsMake(64., .0, .0, .0)];
-        [self addSubview:_tableViewMenu];
-        
-        NSDictionary *views = @{ @"tableViewMenu": _tableViewMenu };
-        [_tableViewMenu setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableViewMenu]|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[tableViewMenu]-100-|" options:0 metrics:nil views:views]];
-    }
-    return _tableViewMenu;
 }
 
 #pragma mark UITableViewDataSource, UITableViewDelegate
@@ -170,14 +190,14 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     [[NSNotificationCenter defaultCenter] postNotificationName:DVDropdownMenuItemTouch object:nil];
 }
 
+#pragma mark - Actions
+- (void)onViewBotomTouch {
+    [[NSNotificationCenter defaultCenter] postNotificationName:DVDropdownMenuItemTouch object:nil];
+}
+
 #pragma mark Utils
-- (void)updateView {
-    CGRect frame = self.frame;
-    frame.size.height = [UIScreen mainScreen].bounds.size.height;
-    frame.origin.y = -frame.size.height;
-    [self setFrame:frame];
-    
-    [self.tableViewMenu setScrollEnabled:((CELL_HEIGHT_DEFAULT * self.dropdownMenuItems.count + HEADER_HEIGHT) > (frame.size.height - 100.))];
+- (CGFloat)tableViewHeightMin {
+    return CELL_HEIGHT_DEFAULT * self.dropdownMenuItems.count + HEADER_HEIGHT;
 }
 
 @end
@@ -194,7 +214,6 @@ NSString * const DVDropdownMenuItemTouch = @"DVDropdownMenuItemTouch";
     DVDropdownMenu *dvDropdownMenu = objc_getAssociatedObject(self, @selector(dvDropdownMenu));
     if (!dvDropdownMenu) {
         dvDropdownMenu = [[DVDropdownMenu alloc] initWithFrame:CGRectMake(.0, .0, CGRectGetWidth(self.navigationBar.frame), .0)];
-        [dvDropdownMenu addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onOutsideTouch)]];
         [self.view insertSubview:dvDropdownMenu belowSubview:self.navigationBar];
         [self setDvDropdownMenu:dvDropdownMenu];
     }
